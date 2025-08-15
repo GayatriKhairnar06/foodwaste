@@ -1,70 +1,34 @@
-import os
 import pandas as pd
-from sqlalchemy import create_engine, text
-import psycopg2
+import sqlite3
+import os
 
-# ====== CONFIG ======
-USER = "postgres"
-PASSWORD = "Gayu123"
-HOST = "localhost"
-PORT = "5432"
-DATABASE = "food_wastage"
-CSV_DIR = "."  # CSV files ka folder (current dir me)
-WRITE_MODE = "replace"  # "append" ya "replace"
+# Database file name
+DB_FILE = "data.db"
 
-# Files → Tables mapping
-files_tables = {
-    "providers_data.csv": "providers",
-    "receivers_data.csv": "receivers",
-    "food_listings_data.csv": "food_listings",
-    "claims_data.csv": "claims"
+# CSV file names and the table names to use in SQLite
+tables = {
+    "Providers.csv": "providers",
+    "Receivers.csv": "receivers",
+    "Food_Listings.csv": "food_listings",
+    "Claims.csv": "claims"
 }
 
-# ====== ENGINE BANANA ======
-engine = create_engine(f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}")
+def create_database():
+    # Connect to SQLite (creates file if it doesn't exist)
+    conn = sqlite3.connect(DB_FILE)
+    print(f"📦 Connected to SQLite database: {DB_FILE}")
 
-# ====== DATABASE CREATE KARNA ======
-def ensure_database():
-    try:
-        conn = psycopg2.connect(
-            dbname="postgres", user=USER, password=PASSWORD, host=HOST, port=PORT
-        )
-        conn.autocommit = True
-        cur = conn.cursor()
-        cur.execute(f"SELECT 1 FROM pg_database WHERE datname = '{DATABASE}'")
-        exists = cur.fetchone()
-        if not exists:
-            cur.execute(f"CREATE DATABASE {DATABASE}")
-            print(f"✅ Database '{DATABASE}' created!")
+    # Loop through CSVs and load them into tables
+    for csv_file, table_name in tables.items():
+        if os.path.exists(csv_file):
+            df = pd.read_csv(csv_file)
+            df.to_sql(table_name, conn, if_exists="replace", index=False)
+            print(f"✅ Loaded '{csv_file}' into table '{table_name}' ({len(df)} rows).")
         else:
-            print(f"ℹ Database '{DATABASE}' already exists.")
-        cur.close()
-        conn.close()
-    except Exception as e:
-        print(f"❌ Failed to ensure database: {e}")
+            print(f"⚠️ File not found: {csv_file}")
 
-# ====== CSV UPLOAD FUNCTION ======
-def upload_csvs():
-    for file, table in files_tables.items():
-        file_path = os.path.join(CSV_DIR, file)
-        if not os.path.exists(file_path):
-            print(f"⚠ Skipping {file} → File not found.")
-            continue
-        try:
-            df = pd.read_csv(file_path)
-            df.to_sql(table, engine, if_exists=WRITE_MODE, index=False)
+    conn.close()
+    print("🎯 Database creation completed!")
 
-            # SQLAlchemy 2.x compatible query
-            with engine.connect() as conn:
-                result = conn.execute(text(f"SELECT COUNT(*) FROM {table}"))
-                count = result.scalar()
-
-            print(f"✅ Uploaded {file} → {table} ({count} rows).")
-        except Exception as e:
-            print(f"❌ Failed to upload {file} → {table}: {e}")
-
-# ====== RUN ======
 if __name__ == "__main__":
-    ensure_database()
-    upload_csvs()
-    print("🎯 All files processed!")
+    create_database()
