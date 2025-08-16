@@ -2,16 +2,15 @@ import streamlit as st
 import psycopg2
 import pandas as pd
 
-
 # Function to get a database connection using st.secrets
 def get_db_connection():
     try:
         conn = psycopg2.connect(
-            host=st.secrets["neon"]["ep-green-base-a1qymscb-pooler.ap-southeast-1.aws.neon.tech"],
-            dbname=st.secrets["neon"]["food_wastage"],
-            user=st.secrets["neon"]["neondb_owner"],
-            password=st.secrets["neon"]["npg_fFN8DhKjq6wM"],
-            port=st.secrets["neon"]["5432"]
+            host=st.secrets["neon"]["host"],
+            dbname=st.secrets["neon"]["dbname"],
+            user=st.secrets["neon"]["user"],
+            password=st.secrets["neon"]["password"],
+            port=st.secrets["neon"]["port"]
         )
         return conn
     except Exception as e:
@@ -20,7 +19,6 @@ def get_db_connection():
 
 
 # --- Main Streamlit App ---
-
 st.title("Food Wastage Management Dashboard 🥭")
 
 # Get database connection
@@ -44,12 +42,10 @@ if conn:
         conn.commit()
         st.info("Ensured 'providers' table exists.")
 
-        # Insert some sample data to avoid an empty table
-        # Use ON CONFLICT DO NOTHING to avoid duplicate entries on each run
+        # Insert some sample data (with ON CONFLICT DO NOTHING)
         insert_query = """
         INSERT INTO providers (name, city, contact) VALUES
         ('Green Plate', 'New York', '123-456-7890'),
-        ('The Daily Spoon', 'Los Angeles', '098-765-4321'),
         ('The Daily Spoon', 'Los Angeles', '098-765-4321')
         ON CONFLICT DO NOTHING;
         """
@@ -60,26 +56,28 @@ if conn:
         # --- SQL Query Example ---
         st.header("Food Providers by City")
 
-        # Get the list of cities from the database to populate a selectbox
+        # Get list of cities
         cursor.execute("SELECT DISTINCT city FROM providers ORDER BY city;")
         cities = [row[0] for row in cursor.fetchall()]
 
-        selected_city = st.selectbox("Select a city:", cities)
+        if cities:
+            selected_city = st.selectbox("Select a city:", cities)
 
-        # Query to fetch providers for the selected city
-        query = f"SELECT name, city, contact FROM providers WHERE city = '{selected_city}';"
-        df = pd.read_sql(query, conn)
+            # Fetch providers for the selected city
+            query = "SELECT name, city, contact FROM providers WHERE city = %s;"
+            df = pd.read_sql(query, conn, params=(selected_city,))
 
-        # Display the results
-        if not df.empty:
-            st.dataframe(df)
+            if not df.empty:
+                st.dataframe(df)
+            else:
+                st.warning(f"No providers found in {selected_city}.")
         else:
-            st.warning(f"No providers found in {selected_city}.")
+            st.warning("No cities found in database.")
 
     except Exception as e:
         st.error(f"An error occurred during database operations: {e}")
     finally:
-        # Close the connection
         if conn:
+            cursor.close()
             conn.close()
             st.write("Connection closed.")
