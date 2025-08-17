@@ -57,7 +57,7 @@ if __name__ == "__main__":
     datasets = {
         "providers_data.csv": ("providers_data", ["Provider_ID", "Name", "Type","Address","City","Contact"]),
         "receivers_data.csv": ("receivers_data", ["Receiver_ID","Name", "Type", "City","Contact"]),
-        "food_listings_data.csv": ("food_listings_data", ["Food_id", "Food_Name", "Quantity", "Expiry_Date","Provider_ID","Provider_Type","Location","Food_Type","Meal_Type"]),
+        "food_listings_data.csv": ("food_listings_data", ["Food_ID", "Food_Name", "Quantity", "Expiry_Date","Provider_ID","Provider_Type","Location","Food_Type","Meal_Type"]),
         "claims_data.csv": ("claims_data", ["Claim_ID", "Food_ID", "Receiver_ID", "Status","Timestamp"])
     }
 
