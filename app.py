@@ -51,7 +51,7 @@ menu = st.sidebar.radio("Navigation", ["Providers", "Receivers", "Food Listings"
 # ========================
 if menu == "Providers":
     st.subheader("👨‍🌾 Providers List")
-    df = run_query('SELECT * FROM "providers_data";')
+    df = run_query('SELECT * FROM "Providers";')
     st.dataframe(df)
 
 # ========================
@@ -59,14 +59,14 @@ if menu == "Providers":
 # ========================
 elif menu == "Receivers":
     st.subheader("🤝 Receivers List")
-    df = run_query('SELECT * FROM "receivers_data";')
+    df = run_query('SELECT * FROM "Receivers";')
     st.dataframe(df)
 
 # ========================
 # Food Listings
 # ========================
 elif menu == "Food Listings":
-    st.subheader("🍲 Available Food Listings")
+    st.subheader("🍲 Available Food_Listings")
     df = run_query('SELECT * FROM "food_listings_data";')
     st.dataframe(df)
 
@@ -75,7 +75,7 @@ elif menu == "Food Listings":
 # ========================
 elif menu == "Claims":
     st.subheader("📦 Food Claims")
-    df = run_query('SELECT * FROM "Claims_data";')
+    df = run_query('SELECT * FROM "Claims";')
     st.dataframe(df)
 
 # ========================
