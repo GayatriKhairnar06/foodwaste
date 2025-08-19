@@ -55,10 +55,10 @@ def load_csv_to_neon(csv_path, table_name, columns):
 if __name__ == "__main__":
     # Example: Replace with your actual CSV filenames and columns
     datasets = {
-        "providers_data.csv": ("providers_data", ["Provider_ID", "Name", "Type","Address","City","Contact"]),
-        "receivers_data.csv": ("receivers_data", ["Receiver_ID","Name", "Type", "City","Contact"]),
-        "food_listings_data.csv": ("food_listings_data", ["Food_ID", "Food_Name", "Quantity", "Expiry_Date","Provider_ID","Provider_Type","Location","Food_Type","Meal_Type"]),
-        "claims_data.csv": ("claims_data", ["Claim_ID", "Food_ID", "Receiver_ID", "Status","Timestamp"])
+        "providers_data.csv": ("Providers", ["Provider_ID", "Name", "Type","Address","City","Contact"]),
+        "receivers_data.csv": ("Receivers", ["Receiver_ID","Name", "Type", "City","Contact"]),
+        "food_listings_data.csv": ("Food_Listings", ["Food_ID", "Food_Name", "Quantity", "Expiry_Date","Provider_ID","Provider_Type","Location","Food_Type","Meal_Type"]),
+        "claims_data.csv": ("Claims", ["Claim_ID", "Food_ID", "Receiver_ID", "Status","Timestamp"])
     }
 
     for csv_file, (table_name, columns) in datasets.items():
