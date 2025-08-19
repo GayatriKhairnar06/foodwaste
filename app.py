@@ -43,14 +43,30 @@ st.title("🍴 Food Waste Management Dashboard")
 st.write("Filter food availability & requests from the database")
 
 # Dropdown filters
-city_filter = st.selectbox("Select City", ["All"] + run_query("SELECT DISTINCT \"City\" FROM \"Providers\"")["City"].tolist())
-provider_filter = st.selectbox("Select Provider", ["All"] + run_query("SELECT DISTINCT \"Name\" FROM \"Providers\"")["Name"].tolist())
-food_type_filter = st.selectbox("Select Food Type", ["All"] + run_query("SELECT DISTINCT \"Type\" FROM \"Food_Listings\"")["Type"].tolist())
-meal_type_filter = st.selectbox("Select Meal Type", ["All"] + run_query("SELECT DISTINCT \"Meal_Type\" FROM \"Food_Listings\"")["Meal_Type"].tolist())
+city_filter = st.selectbox(
+    "Select City",
+    ["All"] + run_query('SELECT DISTINCT "City" FROM "Providers"')["City"].dropna().tolist()
+)
+
+provider_filter = st.selectbox(
+    "Select Provider",
+    ["All"] + run_query('SELECT DISTINCT "Name" FROM "Providers"')["Name"].dropna().tolist()
+)
+
+# ✅ FIX: Changed "Type" → "Food_Type"
+food_type_filter = st.selectbox(
+    "Select Food Type",
+    ["All"] + run_query('SELECT DISTINCT "Food_Type" FROM "Food_Listings"')["Food_Type"].dropna().tolist()
+)
+
+meal_type_filter = st.selectbox(
+    "Select Meal Type",
+    ["All"] + run_query('SELECT DISTINCT "Meal_Type" FROM "Food_Listings"')["Meal_Type"].dropna().tolist()
+)
 
 # Build dynamic query
 query = """
-SELECT f."Food_ID", f."Type" AS "Food Type", f."Meal_Type" AS "Meal Type",
+SELECT f."Food_ID", f."Food_Type" AS "Food Type", f."Meal_Type" AS "Meal Type",
        p."Name" AS "Provider", p."City", p."Contact"
 FROM "Food_Listings" f
 JOIN "Providers" p ON f."Provider_ID" = p."Provider_ID"
@@ -67,7 +83,7 @@ if provider_filter != "All":
     filters.append('p."Name" = %s')
     params.append(provider_filter)
 if food_type_filter != "All":
-    filters.append('f."Type" = %s')
+    filters.append('f."Food_Type" = %s')   # ✅ FIX here
     params.append(food_type_filter)
 if meal_type_filter != "All":
     filters.append('f."Meal_Type" = %s')
