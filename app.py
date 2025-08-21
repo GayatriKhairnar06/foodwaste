@@ -11,7 +11,8 @@ def get_db_connection():
         dbname=st.secrets["neon"]["dbname"],
         user=st.secrets["neon"]["user"],
         password=st.secrets["neon"]["password"],
-        port=st.secrets["neon"]["port"]
+        port=st.secrets["neon"]["port"],
+        sslmode="require"   # 🔑 Important for Neon Cloud DB
     )
 
 # ==============================
@@ -81,4 +82,3 @@ else:
     st.subheader("📞 Provider Contact Details")
     contact_df = filtered_df[["provider_name", "provider_type", "City", "Contact"]].drop_duplicates()
     st.table(contact_df)
-
