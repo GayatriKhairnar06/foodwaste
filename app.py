@@ -42,7 +42,7 @@ def load_data():
 # Streamlit App
 # ==============================
 st.set_page_config(page_title="Food Waste Management", layout="wide")
-st.title("🍲 Food Waste Management Dashboard")
+st.title("🍲 Food Waste Management")
 
 # Load data
 df = load_data()
