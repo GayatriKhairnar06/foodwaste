@@ -12,15 +12,14 @@ The platform provides:
 ## 🏗️ Project Structure
 Food Waste Management/
 
--│── api.py # Streamlit app exposing APIs for CRUD & queries
--│── crud.py # Contains create, read, update, delete functions
--│── upload_data.py # Script to upload CSV data into Neon DB
--│── queries.sql # SQL scripts for creating tables & running queries
--│── schemas.py # Pydantic models for request/response validation
--│── requirements.txt # Python dependencies
--│── README.md # Project documentation
--│── /data # Folder containing sample CSV datasets
-
+-api.py # Streamlit app exposing APIs for CRUD & queries
+- crud.py # Contains create, read, update, delete functions
+- upload_data.py # Script to upload CSV data into Neon DB
+- queries.sql # SQL scripts for creating tables & running queries
+- schemas.py # Pydantic models for request/response validation
+-requirements.txt # Python dependencies
+- README.md # Project documentation
+-datasets 
 ## ⚙️ Tech Stack
 - Frontend/UI: Streamlit  
 - Backend: Python (FastAPI/Streamlit APIs + CRUD logic)  
